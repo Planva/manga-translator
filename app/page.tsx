@@ -40,7 +40,7 @@ export default function Home() {
       // 1. 把文件绘制到 <canvas>
       const imgURL =
         f.type === 'application/pdf'
-          ? await pdf2png(f, pdfjs)
+          ? await pdf2png(f, getDocument)
           : URL.createObjectURL(f);
 
       // 2. OCR 并把文字画上去
@@ -51,8 +51,8 @@ export default function Home() {
   }
 
   /** PDF → PNG DataURL（取第 1 页） */
-  async function pdf2png(file: File, pdfjs: any) {
-    const pdf = await pdfjs.getDocument(await file.arrayBuffer()).promise;
+  async function pdf2png(file: File, getDocumentFn: any) {
+    const pdf = await getDocumentFn(await file.arrayBuffer()).promise;
     const page = await pdf.getPage(1);
     const vp   = page.getViewport({ scale: 1.5 });
     const cvs  = document.createElement('canvas');
