@@ -1,8 +1,11 @@
-/** @type {import('next').NextConfig} */
+// next.config.js
 module.exports = {
-    // 开启静态导出
-    output: 'export',
-    // 如需每个页面生成到 /page-name/index.html，取消下一行注释：
-    // trailingSlash: true,
-  };
-  
+  output: 'export',
+  webpack(config) {
+    config.module.rules.push({
+      test: /pdf\.worker(\.min)?\.mjs$/,
+      type: 'asset/resource',
+    });
+    return config;
+  },
+};
