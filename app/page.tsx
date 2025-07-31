@@ -40,7 +40,7 @@ export default function Home() {
       // 1. 把文件绘制到 <canvas>
       const imgURL =
         f.type === 'application/pdf'
-          ? await pdf2png(f, getDocument)
+          ? await pdf2png(f, pdfjs)
           : URL.createObjectURL(f);
 
       // 2. OCR 并把文字画上去
