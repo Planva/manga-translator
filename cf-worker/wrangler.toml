@@ -1,0 +1,7 @@
+account_id = "56db5c1a91ec01f4b3c7c612d8ebeeef"
+name = "translator-worker"
+main = "src/index.ts"
+compatibility_date = "2025-07-31"
+[[ai]]
+binding = "AI"
+experimental_remote = true 
