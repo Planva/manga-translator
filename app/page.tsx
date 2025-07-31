@@ -32,7 +32,7 @@ export default function Home() {
     const files = Array.from(e.target.files || []);
     const outs: string[] = [];
 
-    cconst pdfjs = await import('pdfjs-dist/legacy/build/pdf');
+    const pdfjs = await import('pdfjs-dist/legacy/build/pdf');
     pdfjs.GlobalWorkerOptions.workerSrc =
       'https://cdn.jsdelivr.net/npm/pdfjs-dist@3/legacy/build/pdf.worker.min.js';
 
