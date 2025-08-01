@@ -40,7 +40,7 @@ export default function Home() {
       // 1. 把文件绘制到 <canvas>
       const imgURL =
         f.type === 'application/pdf'
-          ? await pdf2png(f, pdfjs)
+          ? ? await pdf2png(f, pdfjs)
           : URL.createObjectURL(f);
 
       // 2. OCR 并把文字画上去
@@ -89,7 +89,49 @@ export default function Home() {
     setBusy(false);
     return cvs.toDataURL();
   }
-
+  async function ocrOverlay(imgSrc: string) {
+    // … 绘制原图到 Canvas …
+  
+    // 执行 OCR，拿到所有单词和 bbox
+    const { data } = await workerRef.current.recognize(img);
+  
+    // 先把所有文字拼成一句
+    const srcText = data.words.map(w => w.text).join(" ");
+  
+    // 请求翻译，并带上用户 ID
+    const cf = await fetch("/api/translate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-User-Id": "user-123",         // 真实项目用登录用户 ID
+      },
+      body: JSON.stringify({ text: srcText, target: "en" }),
+    });
+  
+    if (cf.status === 429) {
+      alert("今日免费配额已用完，请明日再试");
+      return imgSrc;                     // 返回原图
+    }
+    if (!cf.ok) {
+      alert("翻译出错，请稍后重试");
+      return imgSrc;
+    }
+    const { translated_text } = await cf.json();
+  
+    // 把翻译结果再按原 OCR bbox 画上去
+    ctx.font = "20px sans-serif";
+    const words = translated_text.split(" ");
+    data.words.forEach((w, i) => {
+      const { x0, y0, x1 } = w.bbox;
+      const t = words[i] || "";           // 对不上也别出错
+      ctx.fillStyle = "rgba(255,255,255,0.7)";
+      ctx.fillRect(x0, y0 - 20, x1 - x0, 24);
+      ctx.fillStyle = "black";
+      ctx.fillText(t, x0, y0);
+    });
+  
+    return cvs.toDataURL();
+  }
   return (
     <>
       {/* 1. 先把 Tesseract 脚本塞进 head，等其 onLoad 再执行 */}
