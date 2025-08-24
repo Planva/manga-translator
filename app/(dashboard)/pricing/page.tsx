@@ -4,8 +4,8 @@ import { Check } from 'lucide-react';
 import { getStripePrices, getStripeProducts } from '@/lib/payments/stripe';
 import { SubmitButton } from './submit-button';
 
-// Prices are fresh for one hour max
-export const revalidate = 3600;
+// Fetch pricing data at request time to avoid build-time API calls
+export const dynamic = 'force-dynamic';
 
 interface ProductWithPrice {
   id: string;
