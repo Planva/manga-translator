@@ -5,11 +5,6 @@ import { NewUser } from '@/lib/db/schema';
 
 const key = new TextEncoder().encode(process.env.AUTH_SECRET);
 const SALT_ROUNDS = 10;
-export interface SessionData {
-  user: { id: string };
-  expires: string;
-  stripeRole?: "free" | "paid";    // ← 新增
-}
 export async function hashPassword(password: string) {
   return hash(password, SALT_ROUNDS);
 }
@@ -21,9 +16,10 @@ export async function comparePasswords(
   return compare(plainTextPassword, hashedPassword);
 }
 
-type SessionData = {
+export type SessionData = {
   user: { id: number };
   expires: string;
+  stripeRole?: "free" | "paid";
 };
 
 export async function signToken(payload: SessionData) {
